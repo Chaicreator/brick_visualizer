@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // LP = Помидор
   // a  = Картошка
   // b  = Морковка
-
   const attributes = {
     LC: "Огурец",
     LP: "Помидор",
@@ -40,12 +39,39 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   // ================================
-  // 3. ЛОГИКА ОТОБРАЖЕНИЯ
+  // 3. МАССИВ КНОПОК
+  // ================================
+  // Каждая кнопка имеет группу, значение (value) и картинку
+  const buttons = [
+    {
+      group: "group1",
+      value: "LC",
+      image: "https://mzt-zavod.ru/wp-content/uploads/2025/02/11.2-%D0%9A%D0%BB%D0%B8%D0%BD%D0%BA%D0%B5%D1%80%D0%BD%D0%B0%D1%8F-%D1%82%D0%B5%D1%80%D0%BC%D0%BE%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C-Sandia-%D0%9F%D0%B5%D1%81%D0%BE%D1%87%D0%BD%D1%8B%D0%B9-150x150.jpg",
+    },
+    {
+      group: "group1",
+      value: "LP",
+      image: "https://mzt-zavod.ru/wp-content/uploads/2025/02/11.2-%D0%9A%D0%BB%D0%B8%D0%BD%D0%BA%D0%B5%D1%80%D0%BD%D0%B0%D1%8F-%D1%82%D0%B5%D1%80%D0%BC%D0%BE%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C-Sandia-%D0%9F%D0%B5%D1%81%D0%BE%D1%87%D0%BD%D1%8B%D0%B9-150x150.jpg",
+    },
+    {
+      group: "group2",
+      value: "a",
+      image: "https://mzt-zavod.ru/wp-content/uploads/2025/02/11.2-%D0%9A%D0%BB%D0%B8%D0%BD%D0%BA%D0%B5%D1%80%D0%BD%D0%B0%D1%8F-%D1%82%D0%B5%D1%80%D0%BC%D0%BE%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C-Sandia-%D0%9F%D0%B5%D1%81%D0%BE%D1%87%D0%BD%D1%8B%D0%B9-150x150.jpg",
+    },
+    {
+      group: "group2",
+      value: "b",
+      image: "https://mzt-zavod.ru/wp-content/uploads/2025/02/11.2-%D0%9A%D0%BB%D0%B8%D0%BD%D0%BA%D0%B5%D1%80%D0%BD%D0%B0%D1%8F-%D1%82%D0%B5%D1%80%D0%BC%D0%BE%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C-Sandia-%D0%9F%D0%B5%D1%81%D0%BE%D1%87%D0%BD%D1%8B%D0%B9-150x150.jpg",
+    },
+  ];
+
+  // ================================
+  // 4. СОЗДАЕМ КОНТЕЙНЕР
   // ================================
   const container = document.createElement("div");
   container.style.position = "relative";
   container.style.width = "100%";
-  container.style.height = "800px";
+  container.style.height = "80vh"; // адаптивная высота
   container.style.backgroundImage = `url(${images[0].url})`;
   container.style.backgroundPosition = "center";
   container.style.backgroundRepeat = "no-repeat";
@@ -53,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   container.style.backgroundColor = "#000";
   document.getElementById("my-gallery").appendChild(container);
 
-  // Панель справа
+  // Панель кнопок справа
   const panel = document.createElement("div");
   panel.style.position = "absolute";
   panel.style.top = "0";
@@ -65,56 +91,52 @@ document.addEventListener("DOMContentLoaded", () => {
   panel.style.flexDirection = "column";
   panel.style.justifyContent = "center";
   panel.style.alignItems = "center";
-  panel.style.gap = "20px";
+  panel.style.gap = "10px";
   container.appendChild(panel);
 
-  // Состояние выбранных кнопок
-  const state = { group1: null, group2: null };
+  // ================================
+  // 5. СОСТОЯНИЕ ВЫБОРА
+  // ================================
+  const state = {};
 
-  // Функция создания кнопок
-  function createToggleButton(label, color, group, row) {
+  // ================================
+  // 6. СОЗДАЕМ КНОПКИ
+  // ================================
+  function createButton(btnConfig, row) {
     const btn = document.createElement("button");
-    btn.textContent = label;
-    btn.setAttribute("data-label", label);
-    btn.style.padding = "10px 20px";
-    btn.style.border = "none";
+    btn.style.width = "80px";
+    btn.style.height = "80px";
+    btn.style.border = "2px solid white";
     btn.style.borderRadius = "8px";
-    btn.style.backgroundColor = color;
-    btn.style.color = "#fff";
-    btn.style.fontSize = "16px";
+    btn.style.backgroundImage = `url(${btnConfig.image})`;
+    btn.style.backgroundSize = "cover";
+    btn.style.backgroundPosition = "center";
     btn.style.cursor = "pointer";
 
     btn.addEventListener("click", () => {
-      // снимаем отметку со всех кнопок ряда
-      row.querySelectorAll("button").forEach((b) => {
-        b.textContent = b.getAttribute("data-label");
-      });
-      // отмечаем выбранную
-      btn.textContent = label + " ✔";
-      state[group] = label;
+      // снимаем выделение с кнопок в ряду
+      row.querySelectorAll("button").forEach((b) => (b.style.outline = "none"));
+      btn.style.outline = "3px solid lime";
+      state[btnConfig.group] = btnConfig.value;
     });
 
     return btn;
   }
 
-  // Ряд 1 (LC, LP)
-  const row1 = document.createElement("div");
-  row1.style.display = "flex";
-  row1.style.gap = "10px";
-  row1.appendChild(createToggleButton("LC", "crimson", "group1", row1));
-  row1.appendChild(createToggleButton("LP", "teal", "group1", row1));
-  panel.appendChild(row1);
+  const groups = [...new Set(buttons.map((b) => b.group))];
+  groups.forEach((group) => {
+    const row = document.createElement("div");
+    row.style.display = "flex";
+    row.style.gap = "10px";
+    buttons
+      .filter((b) => b.group === group)
+      .forEach((btnConf) => row.appendChild(createButton(btnConf, row)));
+    panel.appendChild(row);
+  });
 
-  // Ряд 2 (a, b)
-  const row2 = document.createElement("div");
-  row2.style.display = "flex";
-  row2.style.gap = "10px";
-  row2.appendChild(createToggleButton("a", "royalblue", "group2", row2));
-  row2.appendChild(createToggleButton("b", "darkorange", "group2", row2));
-  panel.appendChild(row2);
-
-  // Ряд 3 ("посмотреть")
-  const row3 = document.createElement("div");
+  // ================================
+  // 7. КНОПКА "ПОСМОТРЕТЬ"
+  // ================================
   const checkBtn = document.createElement("button");
   checkBtn.textContent = "посмотреть";
   checkBtn.style.padding = "12px 25px";
@@ -124,32 +146,42 @@ document.addEventListener("DOMContentLoaded", () => {
   checkBtn.style.backgroundColor = "limegreen";
   checkBtn.style.color = "#fff";
   checkBtn.style.cursor = "pointer";
+  checkBtn.style.marginTop = "20px";
 
   checkBtn.addEventListener("click", () => {
-    if (state.group1 && state.group2) {
-      const found = images.find(
-        (img) =>
-          img.attrs.includes(state.group1) && img.attrs.includes(state.group2)
-      );
-      if (found) {
-        container.style.backgroundImage = `url(${found.url})`;
-      } else {
-        alert("Нет изображения с такими параметрами");
-      }
+    const selected = Object.values(state);
+    if (selected.length < groups.length) {
+      alert("Выберите по одной кнопке из каждой группы");
+      return;
+    }
+    const found = images.find((img) =>
+      selected.every((v) => img.attrs.includes(v))
+    );
+    if (found) {
+      container.style.backgroundImage = `url(${found.url})`;
     } else {
-      alert("Выберите по одной кнопке из каждого ряда");
+      alert("Нет изображения с такими параметрами");
     }
   });
-
-  row3.appendChild(checkBtn);
-  panel.appendChild(row3);
+  panel.appendChild(checkBtn);
 
   // ================================
-  // 4. СООТВЕТСТВИЕ КНОПОК АТРИБУТАМ
+  // 8. АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ
   // ================================
-  console.log("Соответствие кнопок:");
-  console.log("LC =", attributes.LC);
-  console.log("LP =", attributes.LP);
-  console.log("a  =", attributes.a);
-  console.log("b  =", attributes.b);
+  const style = document.createElement("style");
+  style.textContent = `
+    @media(max-width:768px){
+      #my-gallery > div {
+        flex-direction: column !important;
+        width: 100% !important;
+        height: auto !important;
+      }
+      #my-gallery > div > div {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 });
