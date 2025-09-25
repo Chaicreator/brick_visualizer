@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Ряд 3 (посмотреть)
   const row3 = document.createElement("div");
   const checkBtn = document.createElement("button");
-  checkBtn.textContent = "посмотреть";
+  checkBtn.textContent = "apply";
   checkBtn.style.padding = "12px 25px";
   checkBtn.style.fontSize = "18px";
   checkBtn.style.border = "none";
@@ -123,4 +123,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   row3.appendChild(checkBtn);
   panel.appendChild(row3);
+
 });
